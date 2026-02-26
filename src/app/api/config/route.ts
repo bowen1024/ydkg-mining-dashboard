@@ -25,7 +25,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const kv = getKV()
-    const body: MinersStore = await request.json()
+    const body = (await request.json()) as MinersStore
     if (!body.miners || !Array.isArray(body.miners)) {
       return NextResponse.json({ error: 'Invalid config format' }, { status: 400 })
     }

@@ -61,11 +61,11 @@ export function RevenueChart({ data }: RevenueChartProps) {
               border: '1px solid hsl(0, 0%, 88%)',
               boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
             }}
-            formatter={(value: number) => [
-              `$${value.toFixed(2)}`,
+            formatter={(value: number | undefined) => [
+              `$${(value ?? 0).toFixed(2)}`,
               'Profit',
             ]}
-            labelFormatter={(label: string) => `Date: ${label}`}
+            labelFormatter={(label) => `Date: ${label}`}
           />
           <ReferenceLine y={0} stroke="hsl(0, 0%, 70%)" strokeDasharray="2 2" />
           <Bar

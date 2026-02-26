@@ -13,7 +13,7 @@ export function useMiners() {
       setLoading(true)
       const res = await fetch('/api/config')
       if (!res.ok) throw new Error('Failed to fetch config')
-      const data: MinersStore = await res.json()
+      const data = (await res.json()) as MinersStore
       setMiners(data.miners)
       setError(null)
     } catch (err) {

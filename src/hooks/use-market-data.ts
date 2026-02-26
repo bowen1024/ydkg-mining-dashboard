@@ -3,6 +3,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { DifficultyData, DailyPrice } from '@/lib/types'
 
+interface PricesResponse {
+  prices?: Record<string, number>
+  cached?: boolean
+  stale?: boolean
+  error?: string
+}
+
+interface HistoricalResponse {
+  coin?: string
+  prices?: DailyPrice[]
+  error?: string
+}
+
 interface MarketData {
   currentPrices: Record<string, number>
   difficulty: DifficultyData | null
@@ -32,17 +45,15 @@ export function useMarketData(days: number = 31) {
         fetch(`/api/prices?mode=historical&coin=DOGE&days=${days}`),
       ])
 
-      const [pricesData, diffData, btcData, ltcData, dogeData] = await Promise.all([
-        pricesRes.json(),
-        diffRes.json(),
-        btcHist.json(),
-        ltcHist.json(),
-        dogeHist.json(),
-      ])
+      const pricesData = (await pricesRes.json()) as PricesResponse
+      const diffData = (await diffRes.json()) as Record<string, unknown>
+      const btcData = (await btcHist.json()) as HistoricalResponse
+      const ltcData = (await ltcHist.json()) as HistoricalResponse
+      const dogeData = (await dogeHist.json()) as HistoricalResponse
 
       // Validate difficulty data has required fields
       const validDifficulty = (diffData && typeof diffData.btc === 'number')
-        ? diffData as DifficultyData
+        ? diffData as unknown as DifficultyData
         : null
 
       setData({

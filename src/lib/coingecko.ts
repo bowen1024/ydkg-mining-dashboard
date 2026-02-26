@@ -18,7 +18,7 @@ export async function getCurrentPrices(): Promise<Record<string, number>> {
     { headers: getHeaders() }
   )
   if (!res.ok) throw new Error(`CoinGecko price fetch failed: ${res.status}`)
-  const data = await res.json()
+  const data = (await res.json()) as Record<string, { usd?: number }>
   return {
     BTC: data.bitcoin?.usd || 0,
     LTC: data.litecoin?.usd || 0,
@@ -37,7 +37,7 @@ export async function getHistoricalPrices(
   )
   if (!res.ok) throw new Error(`CoinGecko OHLC fetch failed: ${res.status}`)
   // Response: [[timestamp, open, high, low, close], ...]
-  const data: number[][] = await res.json()
+  const data = (await res.json()) as number[][]
   return data.map((candle) => {
     const [timestamp, , , , close] = candle
     const date = new Date(timestamp).toISOString().split('T')[0]
