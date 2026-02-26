@@ -83,8 +83,8 @@ export const COINGECKO_IDS: Record<string, string> = {
 
 export const DIFFICULTY_ENDPOINTS = {
   BTC: 'https://blockchain.info/q/getdifficulty',
-  LTC: 'https://chainz.cryptoid.info/ltc/api.dws?q=getdifficulty',
-  DOGE: 'https://chainz.cryptoid.info/doge/api.dws?q=getdifficulty',
+  LTC: 'https://api.blockchair.com/litecoin/stats',
+  DOGE: 'https://api.blockchair.com/dogecoin/stats',
 } as const
 
 export const CACHE_DURATION = {

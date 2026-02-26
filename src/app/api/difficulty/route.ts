@@ -5,13 +5,32 @@ import type { DifficultyData } from '@/lib/types'
 let difficultyCache: DifficultyData | null = null
 const CACHE_TTL = 60 * 60 * 1000
 
-async function fetchDifficulty(url: string): Promise<number> {
-  const res = await fetch(url, { signal: AbortSignal.timeout(10000) })
-  if (!res.ok) throw new Error(`Difficulty fetch failed: ${res.status}`)
+async function fetchBtcDifficulty(): Promise<number> {
+  const res = await fetch(DIFFICULTY_ENDPOINTS.BTC, {
+    signal: AbortSignal.timeout(10000),
+  })
+  if (!res.ok) throw new Error(`BTC difficulty fetch failed: ${res.status}`)
   const text = await res.text()
   const value = parseFloat(text.trim())
-  if (isNaN(value)) throw new Error(`Invalid difficulty value: ${text}`)
+  if (isNaN(value)) throw new Error(`Invalid BTC difficulty: ${text}`)
   return value
+}
+
+interface BlockchairResponse {
+  data?: {
+    difficulty?: number
+  }
+}
+
+async function fetchBlockchairDifficulty(url: string, coin: string): Promise<number> {
+  const res = await fetch(url, { signal: AbortSignal.timeout(10000) })
+  if (!res.ok) throw new Error(`${coin} difficulty fetch failed: ${res.status}`)
+  const json = (await res.json()) as BlockchairResponse
+  const difficulty = json?.data?.difficulty
+  if (typeof difficulty !== 'number' || isNaN(difficulty)) {
+    throw new Error(`Invalid ${coin} difficulty from Blockchair`)
+  }
+  return difficulty
 }
 
 export async function GET() {
@@ -22,9 +41,9 @@ export async function GET() {
     }
 
     const [btc, ltc, doge] = await Promise.all([
-      fetchDifficulty(DIFFICULTY_ENDPOINTS.BTC),
-      fetchDifficulty(DIFFICULTY_ENDPOINTS.LTC),
-      fetchDifficulty(DIFFICULTY_ENDPOINTS.DOGE),
+      fetchBtcDifficulty(),
+      fetchBlockchairDifficulty(DIFFICULTY_ENDPOINTS.LTC, 'LTC'),
+      fetchBlockchairDifficulty(DIFFICULTY_ENDPOINTS.DOGE, 'DOGE'),
     ])
 
     difficultyCache = { btc, ltc, doge, fetchedAt: now }
