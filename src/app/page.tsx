@@ -22,6 +22,7 @@ export default function Home() {
     difficulty,
     historicalPrices,
     loading: marketLoading,
+    error: marketError,
   } = useMarketData(Math.max(days, 31))
 
   const allMinerData = useMemo(() => {
@@ -41,6 +42,15 @@ export default function Home() {
         <div className="flex items-center justify-center py-20">
           <p className="text-sm text-muted-foreground animate-pulse">
             Loading market data...
+          </p>
+        </div>
+      ) : marketError && allMinerData.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-2">
+          <p className="text-sm text-muted-foreground">
+            {marketError}
+          </p>
+          <p className="text-xs text-muted-foreground/60">
+            请在 .env.local 中配置 COINGECKO_API_KEY 以获取实时数据
           </p>
         </div>
       ) : (

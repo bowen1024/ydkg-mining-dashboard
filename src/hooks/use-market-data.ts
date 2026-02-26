@@ -40,16 +40,21 @@ export function useMarketData(days: number = 31) {
         dogeHist.json(),
       ])
 
+      // Validate difficulty data has required fields
+      const validDifficulty = (diffData && typeof diffData.btc === 'number')
+        ? diffData as DifficultyData
+        : null
+
       setData({
         currentPrices: pricesData.prices || {},
-        difficulty: diffData,
+        difficulty: validDifficulty,
         historicalPrices: {
-          BTC: btcData.prices || [],
-          LTC: ltcData.prices || [],
-          DOGE: dogeData.prices || [],
+          BTC: Array.isArray(btcData.prices) ? btcData.prices : [],
+          LTC: Array.isArray(ltcData.prices) ? ltcData.prices : [],
+          DOGE: Array.isArray(dogeData.prices) ? dogeData.prices : [],
         },
         loading: false,
-        error: null,
+        error: validDifficulty ? null : 'API data unavailable — showing empty state',
       })
     } catch (err) {
       setData((prev) => ({

@@ -22,7 +22,7 @@ export function computeMinerDailyData(
   const priceMaps: Record<string, Map<string, number>> = {}
   for (const coin of ['BTC', 'LTC', 'DOGE']) {
     const map = new Map<string, number>()
-    const hist = historicalPrices[coin] || []
+    const hist = Array.isArray(historicalPrices[coin]) ? historicalPrices[coin] : []
     for (const dp of hist) {
       map.set(dp.date, dp.price)
     }
