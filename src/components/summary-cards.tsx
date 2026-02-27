@@ -18,7 +18,8 @@ function formatPercent(value: number): string {
 export function SummaryCards({ allMinerData }: SummaryCardsProps) {
   const totalRevenue = allMinerData.reduce((sum, md) => sum + md.totalRevenue, 0)
   const totalElectricity = allMinerData.reduce((sum, md) => sum + md.totalElectricityCost, 0)
-  const netProfit = totalRevenue - totalElectricity
+  const totalManagementFee = allMinerData.reduce((sum, md) => sum + md.totalManagementFee, 0)
+  const netProfit = totalRevenue - totalElectricity - totalManagementFee
   const margin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0
 
   const metrics = [
@@ -32,6 +33,12 @@ export function SummaryCards({ allMinerData }: SummaryCardsProps) {
       label: '总电费',
       sublabel: 'Electricity',
       value: formatUSD(totalElectricity),
+      colorClass: '',
+    },
+    {
+      label: '管理费',
+      sublabel: 'Management Fee',
+      value: formatUSD(totalManagementFee),
       colorClass: '',
     },
     {
@@ -49,7 +56,7 @@ export function SummaryCards({ allMinerData }: SummaryCardsProps) {
   ]
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
       {metrics.map((metric) => (
         <Card key={metric.sublabel} className="py-4 gap-3">
           <CardContent className="px-5">

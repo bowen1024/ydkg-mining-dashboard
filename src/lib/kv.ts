@@ -40,12 +40,25 @@ function writeLocalFile(store: MinersStore): void {
   }
 }
 
+// ── Migration ─────────────────────────────────────────────────────────────────
+// Adds missing fields to miners loaded from old stored data (e.g. KV / local file
+// saved before managementFeeRate was introduced).
+
+function migrateStore(store: MinersStore): MinersStore {
+  return {
+    miners: store.miners.map((m) => ({
+      ...m,
+      managementFeeRate: m.managementFeeRate ?? 0.002,
+    })),
+  }
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export async function getMiners(kvBinding?: KVNamespace): Promise<MinersStore> {
   if (kvBinding) {
     const data = await kvBinding.get(KV_KEY, 'json')
-    if (data) return data as MinersStore
+    if (data) return migrateStore(data as MinersStore)
     const defaults: MinersStore = { miners: DEFAULT_MINERS }
     await kvBinding.put(KV_KEY, JSON.stringify(defaults))
     return defaults
@@ -53,7 +66,7 @@ export async function getMiners(kvBinding?: KVNamespace): Promise<MinersStore> {
 
   // Local dev: re-hydrate from file if HMR wiped the in-memory cache
   if (!localStore) {
-    localStore = readLocalFile() ?? { miners: DEFAULT_MINERS }
+    localStore = migrateStore(readLocalFile() ?? { miners: DEFAULT_MINERS })
   }
   return localStore
 }

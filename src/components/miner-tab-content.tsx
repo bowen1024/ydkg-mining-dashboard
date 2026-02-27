@@ -24,7 +24,7 @@ function profitColor(value: number): string {
 }
 
 export function MinerTabContent({ minerData, onElectricityRateChange }: MinerTabContentProps) {
-  const { miner, dailyRevenues, totalRevenue, totalElectricityCost, totalProfit } = minerData
+  const { miner, dailyRevenues, totalRevenue, totalElectricityCost, totalManagementFee, totalProfit } = minerData
   const [editingRate, setEditingRate] = useState(false)
   const [rateValue, setRateValue] = useState(miner.electricityRate.toString())
 
@@ -99,10 +99,19 @@ export function MinerTabContent({ minerData, onElectricityRateChange }: MinerTab
           )}
         </div>
 
+        <Separator orientation="vertical" className="h-4" />
+
+        <div className="text-xs text-muted-foreground">
+          管理费率:{' '}
+          <span className="font-medium text-foreground tabular-nums">
+            {((miner.managementFeeRate ?? 0) * 100).toFixed(1)}%
+          </span>
+        </div>
+
       </div>
 
       {/* Period summary */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         <div className="space-y-1">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
             Revenue
@@ -114,6 +123,12 @@ export function MinerTabContent({ minerData, onElectricityRateChange }: MinerTab
             Electricity
           </p>
           <p className="text-lg font-bold tabular-nums">{formatUSD(totalElectricityCost)}</p>
+        </div>
+        <div className="space-y-1">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+            Management Fee
+          </p>
+          <p className="text-lg font-bold tabular-nums">{formatUSD(totalManagementFee)}</p>
         </div>
         <div className="space-y-1">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
