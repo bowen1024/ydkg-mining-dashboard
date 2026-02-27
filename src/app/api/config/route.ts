@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getMiners, saveMiners } from '@/lib/kv'
 import type { MinersStore } from '@/lib/types'
 
 function getKV(): KVNamespace | undefined {
   try {
-    const { getRequestContext } = require('@opennextjs/cloudflare')
-    return getRequestContext().env.MINER_CONFIG
+    return getCloudflareContext().env.MINER_CONFIG
   } catch {
+    // Not in a Cloudflare Workers context (local Next.js dev)
     return undefined
   }
 }

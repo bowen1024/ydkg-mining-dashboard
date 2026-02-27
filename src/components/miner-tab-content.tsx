@@ -98,6 +98,7 @@ export function MinerTabContent({ minerData, onElectricityRateChange }: MinerTab
             </button>
           )}
         </div>
+
       </div>
 
       {/* Period summary */}

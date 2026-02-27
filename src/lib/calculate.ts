@@ -1,5 +1,5 @@
 import { BLOCK_REWARDS } from './constants'
-import type { Coin, MinerConfig, DailyRevenue, DifficultyData } from './types'
+import type { Coin, MinerConfig, DailyRevenue } from './types'
 
 const TWO_POW_32 = 2 ** 32
 const SECONDS_PER_DAY = 86400
@@ -30,19 +30,19 @@ export function calculateDailyElectricityCost(
 export function calculateDailyRevenue(
   miner: MinerConfig,
   prices: Record<string, number>,
-  difficulty: DifficultyData,
+  difficulties: Record<string, number>,
   date: string
 ): DailyRevenue {
   const coinOutputs: Record<Coin, number> = { BTC: 0, LTC: 0, DOGE: 0 }
   let revenue = 0
 
   if (miner.algorithm === 'sha256') {
-    const btcPerDay = calculateBtcPerDay(miner.hashrate, difficulty.btc)
+    const btcPerDay = calculateBtcPerDay(miner.hashrate, difficulties.BTC || 0)
     coinOutputs.BTC = btcPerDay
     revenue = btcPerDay * (prices.BTC || 0) * miner.quantity
   } else if (miner.algorithm === 'scrypt') {
-    const ltcPerDay = calculateLtcPerDay(miner.hashrate, difficulty.ltc)
-    const dogePerDay = calculateDogePerDay(miner.hashrate, difficulty.doge)
+    const ltcPerDay = calculateLtcPerDay(miner.hashrate, difficulties.LTC || 0)
+    const dogePerDay = calculateDogePerDay(miner.hashrate, difficulties.DOGE || 0)
     coinOutputs.LTC = ltcPerDay
     coinOutputs.DOGE = dogePerDay
     revenue =
@@ -57,6 +57,8 @@ export function calculateDailyRevenue(
 
   return {
     date,
+    prices,
+    difficulties,
     coinOutputs,
     revenue,
     electricityCost,

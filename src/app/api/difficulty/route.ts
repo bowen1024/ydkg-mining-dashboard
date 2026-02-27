@@ -16,19 +16,30 @@ async function fetchBtcDifficulty(): Promise<number> {
   return value
 }
 
-interface BlockchairResponse {
-  data?: {
-    difficulty?: number
-  }
+interface BlockchairAggRow {
+  date: string
+  'avg(difficulty)': number
 }
 
-async function fetchBlockchairDifficulty(url: string, coin: string): Promise<number> {
+interface BlockchairAggResponse {
+  data?: BlockchairAggRow[]
+}
+
+// Fetches the most recent complete day's average difficulty from Blockchair
+async function fetchBlockchairDailyAvgDifficulty(coin: 'litecoin' | 'dogecoin', label: string): Promise<number> {
+  const yesterday = new Date()
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+  const dateStr = yesterday.toISOString().split('T')[0]
+  const url = `https://api.blockchair.com/${coin}/blocks?a=date,avg(difficulty)&q=time(${dateStr}..${dateStr})`
   const res = await fetch(url, { signal: AbortSignal.timeout(10000) })
-  if (!res.ok) throw new Error(`${coin} difficulty fetch failed: ${res.status}`)
-  const json = (await res.json()) as BlockchairResponse
-  const difficulty = json?.data?.difficulty
+  if (!res.ok) throw new Error(`${label} difficulty fetch failed: ${res.status}`)
+  const json = (await res.json()) as BlockchairAggResponse
+  if (!Array.isArray(json.data) || json.data.length === 0) {
+    throw new Error(`No ${label} difficulty data from Blockchair for ${dateStr}`)
+  }
+  const difficulty = json.data[0]['avg(difficulty)']
   if (typeof difficulty !== 'number' || isNaN(difficulty)) {
-    throw new Error(`Invalid ${coin} difficulty from Blockchair`)
+    throw new Error(`Invalid ${label} difficulty value from Blockchair`)
   }
   return difficulty
 }
@@ -40,11 +51,21 @@ export async function GET() {
       return NextResponse.json(difficultyCache)
     }
 
-    const [btc, ltc, doge] = await Promise.all([
+    const results = await Promise.allSettled([
       fetchBtcDifficulty(),
-      fetchBlockchairDifficulty(DIFFICULTY_ENDPOINTS.LTC, 'LTC'),
-      fetchBlockchairDifficulty(DIFFICULTY_ENDPOINTS.DOGE, 'DOGE'),
+      fetchBlockchairDailyAvgDifficulty('litecoin', 'LTC'),
+      fetchBlockchairDailyAvgDifficulty('dogecoin', 'DOGE'),
     ])
+
+    const btc = results[0].status === 'fulfilled' ? results[0].value : (difficultyCache?.btc ?? 0)
+    const ltc = results[1].status === 'fulfilled' ? results[1].value : (difficultyCache?.ltc ?? 0)
+    const doge = results[2].status === 'fulfilled' ? results[2].value : (difficultyCache?.doge ?? 0)
+
+    results.forEach((r, i) => {
+      if (r.status === 'rejected') {
+        console.error(`Current difficulty fetch failed for ${['BTC','LTC','DOGE'][i]}:`, r.reason)
+      }
+    })
 
     difficultyCache = { btc, ltc, doge, fetchedAt: now }
     return NextResponse.json(difficultyCache)

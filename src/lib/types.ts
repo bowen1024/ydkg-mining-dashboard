@@ -38,8 +38,15 @@ export interface DifficultyData {
   fetchedAt: number // unix ms
 }
 
+export interface DailyDifficultyPoint {
+  date: string // YYYY-MM-DD
+  difficulty: number
+}
+
 export interface DailyRevenue {
   date: string // YYYY-MM-DD
+  prices: Record<string, number> // close price USD used for this day
+  difficulties: Record<string, number> // difficulty used for this day
   coinOutputs: Record<Coin, number> // coins mined per day (single machine)
   revenue: number // USD (all machines)
   electricityCost: number // USD (all machines)
@@ -58,3 +65,4 @@ export interface DateRange {
   from: Date
   to: Date
 }
+

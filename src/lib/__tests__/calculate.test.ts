@@ -6,7 +6,7 @@ import {
   calculateDailyElectricityCost,
   calculateDailyRevenue,
 } from '../calculate'
-import type { MinerConfig, DifficultyData } from '../types'
+import type { MinerConfig } from '../types'
 
 describe('Mining revenue calculations', () => {
   const btcDifficulty = 113_000_000_000_000
@@ -88,11 +88,10 @@ describe('Mining revenue calculations', () => {
       DOGE: 0.25,
     }
 
-    const difficulty: DifficultyData = {
-      btc: 113_000_000_000_000,
-      ltc: 40_000_000,
-      doge: 20_000_000,
-      fetchedAt: Date.now(),
+    const difficulty: Record<string, number> = {
+      BTC: 113_000_000_000_000,
+      LTC: 40_000_000,
+      DOGE: 20_000_000,
     }
 
     it('should calculate BTC miner daily revenue with profit', () => {

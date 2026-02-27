@@ -26,21 +26,33 @@ export async function getCurrentPrices(): Promise<Record<string, number>> {
   }
 }
 
+interface MarketChartResponse {
+  prices?: [number, number][]
+}
+
 export async function getHistoricalPrices(
   coin: 'BTC' | 'LTC' | 'DOGE',
   days: number
 ): Promise<DailyPrice[]> {
   const id = COINGECKO_IDS[coin]
   const res = await fetch(
-    `${BASE_URL}/coins/${id}/ohlc?vs_currency=usd&days=${days}`,
+    `${BASE_URL}/coins/${id}/market_chart?vs_currency=usd&days=${days}&interval=daily`,
     { headers: getHeaders() }
   )
-  if (!res.ok) throw new Error(`CoinGecko OHLC fetch failed: ${res.status}`)
-  // Response: [[timestamp, open, high, low, close], ...]
-  const data = (await res.json()) as number[][]
-  return data.map((candle) => {
-    const [timestamp, , , , close] = candle
-    const date = new Date(timestamp).toISOString().split('T')[0]
-    return { date, price: close }
-  })
+  if (!res.ok) throw new Error(`CoinGecko market_chart fetch failed: ${res.status}`)
+  const data = (await res.json()) as MarketChartResponse
+  const prices = data.prices || []
+  // API returns prices at 00:00 UTC = opening of that day = close of PREVIOUS day.
+  // The final data point has a non-midnight timestamp = today's live price.
+  const dateMap = new Map<string, number>()
+  for (const [timestamp, price] of prices) {
+    const d = new Date(timestamp)
+    if (d.getUTCHours() === 0 && d.getUTCMinutes() === 0) {
+      // Midnight entry: this is previous day's close price
+      d.setUTCDate(d.getUTCDate() - 1)
+    }
+    const date = d.toISOString().split('T')[0]
+    dateMap.set(date, price)
+  }
+  return Array.from(dateMap.entries()).map(([date, price]) => ({ date, price }))
 }

@@ -1,16 +1,20 @@
 // wrangler.jsonc
 {
-  "name": "ydkg-mining-dashboard",
-  "main": ".open-next/worker.js",
-  "compatibility_date": "2025-04-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "kv_namespaces": [
-    {
-      "binding": "MINER_CONFIG",
-      "id": "placeholder-fill-after-create"
-    }
-  ],
-  "vars": {
-    "COINGECKO_API_KEY": ""
-  }
+	"name": "ydkg-mining-dashboard",
+	"main": ".open-next/worker.js",
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"compatibility_date": "2025-04-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"kv_namespaces": [
+		{
+			"binding": "MINER_CONFIG",
+			"id": "08e88ac2d58a456ba8b6392dd705f798"
+		}
+	],
+	"vars": {}
 }

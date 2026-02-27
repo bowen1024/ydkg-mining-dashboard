@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Settings } from 'lucide-react'
+import { Settings, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function Header() {
@@ -14,12 +14,20 @@ export function Header() {
             Mining Dashboard
           </span>
         </div>
-        <Link href="/settings">
-          <Button variant="ghost" size="sm" className="gap-2 text-xs">
-            <Settings className="h-3.5 w-3.5" />
-            设置
-          </Button>
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link href="/methodology">
+            <Button variant="ghost" size="sm" className="gap-2 text-xs">
+              <BookOpen className="h-3.5 w-3.5" />
+              计算方法
+            </Button>
+          </Link>
+          <Link href="/settings">
+            <Button variant="ghost" size="sm" className="gap-2 text-xs">
+              <Settings className="h-3.5 w-3.5" />
+              设置
+            </Button>
+          </Link>
+        </div>
       </div>
     </header>
   )
