@@ -38,15 +38,14 @@ export function calculateDailyRevenue(
 
   if (miner.algorithm === 'sha256') {
     const btcPerDay = calculateBtcPerDay(miner.hashrate, difficulties.BTC || 0)
-    coinOutputs.BTC = btcPerDay
-    revenue = btcPerDay * (prices.BTC || 0) * miner.quantity
+    coinOutputs.BTC = btcPerDay * miner.quantity
+    revenue = coinOutputs.BTC * (prices.BTC || 0)
   } else if (miner.algorithm === 'scrypt') {
     const ltcPerDay = calculateLtcPerDay(miner.hashrate, difficulties.LTC || 0)
     const dogePerDay = calculateDogePerDay(miner.hashrate, difficulties.DOGE || 0)
-    coinOutputs.LTC = ltcPerDay
-    coinOutputs.DOGE = dogePerDay
-    revenue =
-      (ltcPerDay * (prices.LTC || 0) + dogePerDay * (prices.DOGE || 0)) * miner.quantity
+    coinOutputs.LTC = ltcPerDay * miner.quantity
+    coinOutputs.DOGE = dogePerDay * miner.quantity
+    revenue = coinOutputs.LTC * (prices.LTC || 0) + coinOutputs.DOGE * (prices.DOGE || 0)
   }
 
   const electricityCost = calculateDailyElectricityCost(

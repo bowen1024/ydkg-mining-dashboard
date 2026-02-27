@@ -48,7 +48,7 @@ export interface DailyRevenue {
   date: string // YYYY-MM-DD
   prices: Record<string, number> // close price USD used for this day
   difficulties: Record<string, number> // difficulty used for this day
-  coinOutputs: Record<Coin, number> // coins mined per day (single machine)
+  coinOutputs: Record<Coin, number> // coins mined per day (all machines combined)
   revenue: number // USD (all machines)
   electricityCost: number // USD (all machines)
   managementFee: number // USD (all machines) = electricityCost * managementFeeRate
