@@ -44,6 +44,11 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
   const [electricityRate, setElectricityRate] = useState(
     initialData?.electricityRate?.toString() || '0.06'
   )
+  const [managementFeeRate, setManagementFeeRate] = useState(
+    initialData?.managementFeeRate != null
+      ? (initialData.managementFeeRate * 100).toString()
+      : '0.2'
+  )
 
   useEffect(() => {
     if (initialData) {
@@ -53,6 +58,11 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
       setPower(initialData.power.toString())
       setQuantity(initialData.quantity.toString())
       setElectricityRate(initialData.electricityRate.toString())
+      setManagementFeeRate(
+        initialData.managementFeeRate != null
+          ? (initialData.managementFeeRate * 100).toString()
+          : '0.2'
+      )
     }
   }, [initialData])
 
@@ -63,8 +73,9 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
     const powerNum = parseFloat(power)
     const quantityNum = parseInt(quantity, 10)
     const rateNum = parseFloat(electricityRate)
+    const feeRateNum = parseFloat(managementFeeRate)
 
-    if (!name.trim() || isNaN(hashrateNum) || isNaN(powerNum) || isNaN(quantityNum) || isNaN(rateNum)) {
+    if (!name.trim() || isNaN(hashrateNum) || isNaN(powerNum) || isNaN(quantityNum) || isNaN(rateNum) || isNaN(feeRateNum)) {
       return
     }
 
@@ -78,6 +89,7 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
       power: powerNum,
       quantity: quantityNum,
       electricityRate: rateNum,
+      managementFeeRate: feeRateNum / 100,
     }
 
     onSubmit(miner)
@@ -179,6 +191,22 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
             required
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="managementFeeRate" className="text-xs">
+          管理费率 <span className="text-muted-foreground">Management Fee (%)</span>
+        </Label>
+        <Input
+          id="managementFeeRate"
+          type="number"
+          step="0.1"
+          min="0"
+          value={managementFeeRate}
+          onChange={(e) => setManagementFeeRate(e.target.value)}
+          placeholder="e.g. 0.2"
+          required
+        />
       </div>
 
       <div className="flex justify-end gap-2 pt-2">

@@ -58,6 +58,7 @@ export function RevenueTable({ data, miner }: RevenueTableProps) {
       (acc, row) => {
         acc.revenue += row.revenue
         acc.electricityCost += row.electricityCost
+        acc.managementFee += row.managementFee
         acc.profit += row.profit
         if (isScrypt) {
           acc.ltcPrice += row.prices.LTC || 0
@@ -74,7 +75,7 @@ export function RevenueTable({ data, miner }: RevenueTableProps) {
         return acc
       },
       {
-        revenue: 0, electricityCost: 0, profit: 0,
+        revenue: 0, electricityCost: 0, managementFee: 0, profit: 0,
         btcPrice: 0, btcDiff: 0, btcOutput: 0,
         ltcPrice: 0, dogePrice: 0,
         ltcDiff: 0, dogeDiff: 0,
@@ -85,6 +86,7 @@ export function RevenueTable({ data, miner }: RevenueTableProps) {
     return {
       revenue: totals.revenue,
       electricityCost: totals.electricityCost,
+      managementFee: totals.managementFee,
       profit: totals.profit,
       avgBtcPrice: totals.btcPrice / n,
       avgBtcDiff: totals.btcDiff / n,
@@ -129,6 +131,7 @@ export function RevenueTable({ data, miner }: RevenueTableProps) {
           )}
           <TableHead className="text-xs text-right">收入</TableHead>
           <TableHead className="text-xs text-right">电费</TableHead>
+          <TableHead className="text-xs text-right">管理费</TableHead>
           <TableHead className="text-xs text-right">净利润</TableHead>
         </TableRow>
       </TableHeader>
@@ -175,6 +178,9 @@ export function RevenueTable({ data, miner }: RevenueTableProps) {
             </TableCell>
             <TableCell className="text-xs text-right tabular-nums">
               {formatUSD(row.electricityCost)}
+            </TableCell>
+            <TableCell className="text-xs text-right tabular-nums">
+              {formatUSD(row.managementFee)}
             </TableCell>
             <TableCell
               className={`text-xs text-right tabular-nums font-medium ${profitColor(row.profit)}`}
@@ -227,6 +233,9 @@ export function RevenueTable({ data, miner }: RevenueTableProps) {
             </TableCell>
             <TableCell className="text-xs text-right tabular-nums">
               {formatUSD(summary.electricityCost)}
+            </TableCell>
+            <TableCell className="text-xs text-right tabular-nums">
+              {formatUSD(summary.managementFee)}
             </TableCell>
             <TableCell
               className={`text-xs text-right tabular-nums font-semibold ${profitColor(summary.profit)}`}

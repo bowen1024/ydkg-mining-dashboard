@@ -12,6 +12,7 @@ export interface MinerConfig {
   power: number // watts
   quantity: number
   electricityRate: number // $/kWh
+  managementFeeRate: number // decimal, e.g. 0.002 = 0.2%
 }
 
 export interface MinersStore {
@@ -50,6 +51,7 @@ export interface DailyRevenue {
   coinOutputs: Record<Coin, number> // coins mined per day (single machine)
   revenue: number // USD (all machines)
   electricityCost: number // USD (all machines)
+  managementFee: number // USD (all machines) = electricityCost * managementFeeRate
   profit: number // USD
 }
 
@@ -58,6 +60,7 @@ export interface MinerDailyData {
   dailyRevenues: DailyRevenue[]
   totalRevenue: number
   totalElectricityCost: number
+  totalManagementFee: number
   totalProfit: number
 }
 

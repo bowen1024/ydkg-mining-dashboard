@@ -73,7 +73,8 @@ export function computeMinerDailyData(
 
   const totalRevenue = dailyRevenues.reduce((s, d) => s + d.revenue, 0)
   const totalElectricityCost = dailyRevenues.reduce((s, d) => s + d.electricityCost, 0)
-  const totalProfit = totalRevenue - totalElectricityCost
+  const totalManagementFee = dailyRevenues.reduce((s, d) => s + d.managementFee, 0)
+  const totalProfit = totalRevenue - totalElectricityCost - totalManagementFee
 
-  return { miner, dailyRevenues, totalRevenue, totalElectricityCost, totalProfit }
+  return { miner, dailyRevenues, totalRevenue, totalElectricityCost, totalManagementFee, totalProfit }
 }

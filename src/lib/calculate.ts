@@ -55,6 +55,8 @@ export function calculateDailyRevenue(
     miner.quantity
   )
 
+  const managementFee = electricityCost * (miner.managementFeeRate ?? 0)
+
   return {
     date,
     prices,
@@ -62,6 +64,7 @@ export function calculateDailyRevenue(
     coinOutputs,
     revenue,
     electricityCost,
-    profit: revenue - electricityCost,
+    managementFee,
+    profit: revenue - electricityCost - managementFee,
   }
 }

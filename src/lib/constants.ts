@@ -17,6 +17,7 @@ export const DEFAULT_MINERS: MinerConfig[] = [
     power: 3510,
     quantity: 3,
     electricityRate: 0.05,
+    managementFeeRate: 0.002,
   },
   {
     id: 'd1-lite-14',
@@ -28,6 +29,7 @@ export const DEFAULT_MINERS: MinerConfig[] = [
     power: 3000,
     quantity: 2,
     electricityRate: 0.05,
+    managementFeeRate: 0.002,
   },
   {
     id: 's21pro-245',
@@ -39,6 +41,7 @@ export const DEFAULT_MINERS: MinerConfig[] = [
     power: 3531,
     quantity: 2,
     electricityRate: 0.06,
+    managementFeeRate: 0.002,
   },
   {
     id: 's21pro-234',
@@ -50,6 +53,7 @@ export const DEFAULT_MINERS: MinerConfig[] = [
     power: 3400,
     quantity: 1,
     electricityRate: 0.06,
+    managementFeeRate: 0.002,
   },
   {
     id: 's21plus-234',
@@ -61,6 +65,7 @@ export const DEFAULT_MINERS: MinerConfig[] = [
     power: 3400,
     quantity: 2,
     electricityRate: 0.06,
+    managementFeeRate: 0.002,
   },
   {
     id: 's21plus-220',
@@ -72,6 +77,7 @@ export const DEFAULT_MINERS: MinerConfig[] = [
     power: 3200,
     quantity: 1,
     electricityRate: 0.06,
+    managementFeeRate: 0.002,
   },
 ]
 

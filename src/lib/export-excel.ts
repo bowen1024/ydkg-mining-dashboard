@@ -147,14 +147,14 @@ function buildMinerSheet(
   const FMT_diff      = '#,##0'
 
   const headers = isScrypt
-    ? ['日期', 'LTC价格', 'DOGE价格', 'LTC难度', 'DOGE难度', 'LTC产出', 'DOGE产出', '收入', '电费', '净利润']
-    : ['日期', 'BTC价格', 'BTC难度', 'BTC产出', '收入', '电费', '净利润']
+    ? ['日期', 'LTC价格', 'DOGE价格', 'LTC难度', 'DOGE难度', 'LTC产出', 'DOGE产出', '收入', '电费', '管理费', '净利润']
+    : ['日期', 'BTC价格', 'BTC难度', 'BTC产出', '收入', '电费', '管理费', '净利润']
 
   applyHeaderRow(ws, headers)
 
   const colWidths = isScrypt
-    ? [14, 12, 12, 16, 16, 14, 14, 14, 14, 14]
-    : [14, 14, 18, 16, 14, 14, 14]
+    ? [14, 12, 12, 16, 16, 14, 14, 14, 14, 14, 14]
+    : [14, 14, 18, 16, 14, 14, 14, 14]
   setColWidths(ws, colWidths)
 
   md.dailyRevenues.forEach((row, idx) => {
@@ -170,6 +170,7 @@ function buildMinerSheet(
           row.coinOutputs.DOGE,
           row.revenue,
           row.electricityCost,
+          row.managementFee,
           row.profit,
         ]
       : [
@@ -179,11 +180,12 @@ function buildMinerSheet(
           row.coinOutputs.BTC,
           row.revenue,
           row.electricityCost,
+          row.managementFee,
           row.profit,
         ]
     const formats = isScrypt
-      ? [FMT.date, FMT_ltcPrice, FMT_dogePrice, FMT_diff, FMT_diff, FMT.ltcOut, FMT.dogeOut, FMT.usd, FMT.usd, FMT.usd]
-      : [FMT.date, FMT_btcPrice, FMT_diff, FMT.btcOut, FMT.usd, FMT.usd, FMT.usd]
+      ? [FMT.date, FMT_ltcPrice, FMT_dogePrice, FMT_diff, FMT_diff, FMT.ltcOut, FMT.dogeOut, FMT.usd, FMT.usd, FMT.usd, FMT.usd]
+      : [FMT.date, FMT_btcPrice, FMT_diff, FMT.btcOut, FMT.usd, FMT.usd, FMT.usd, FMT.usd]
     applyDataRow(ws, rowIdx, values, formats, row.profit)
   })
 
@@ -203,11 +205,11 @@ function buildMinerSheet(
   const avgDogeDiff  = md.dailyRevenues.reduce((s, d) => s + (d.difficulties?.DOGE || 0), 0) / n
 
   const footerValues = isScrypt
-    ? ['汇总', avgLtcPrice, avgDogePrice, avgLtcDiff, avgDogeDiff, totalCoinLTC, totalCoinDOGE, md.totalRevenue, md.totalElectricityCost, md.totalProfit]
-    : ['汇总', avgBtcPrice, avgBtcDiff, totalCoinBTC, md.totalRevenue, md.totalElectricityCost, md.totalProfit]
+    ? ['汇总', avgLtcPrice, avgDogePrice, avgLtcDiff, avgDogeDiff, totalCoinLTC, totalCoinDOGE, md.totalRevenue, md.totalElectricityCost, md.totalManagementFee, md.totalProfit]
+    : ['汇总', avgBtcPrice, avgBtcDiff, totalCoinBTC, md.totalRevenue, md.totalElectricityCost, md.totalManagementFee, md.totalProfit]
   const footerFormats = isScrypt
-    ? [FMT.date, FMT_ltcPrice, FMT_dogePrice, FMT_diff, FMT_diff, FMT.ltcOut, FMT.dogeOut, FMT.usd, FMT.usd, FMT.usd]
-    : [FMT.date, FMT_btcPrice, FMT_diff, FMT.btcOut, FMT.usd, FMT.usd, FMT.usd]
+    ? [FMT.date, FMT_ltcPrice, FMT_dogePrice, FMT_diff, FMT_diff, FMT.ltcOut, FMT.dogeOut, FMT.usd, FMT.usd, FMT.usd, FMT.usd]
+    : [FMT.date, FMT_btcPrice, FMT_diff, FMT.btcOut, FMT.usd, FMT.usd, FMT.usd, FMT.usd]
   applyFooterRow(ws, footerIdx, footerValues, footerFormats, md.totalProfit)
 }
 
