@@ -45,9 +45,7 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
     initialData?.electricityRate?.toString() || '0.06'
   )
   const [managementFeeRate, setManagementFeeRate] = useState(
-    initialData?.managementFeeRate != null
-      ? (initialData.managementFeeRate * 100).toString()
-      : '0.2'
+    initialData?.managementFeeRate?.toString() ?? '0.002'
   )
 
   useEffect(() => {
@@ -58,11 +56,7 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
       setPower(initialData.power.toString())
       setQuantity(initialData.quantity.toString())
       setElectricityRate(initialData.electricityRate.toString())
-      setManagementFeeRate(
-        initialData.managementFeeRate != null
-          ? (initialData.managementFeeRate * 100).toString()
-          : '0.2'
-      )
+      setManagementFeeRate(initialData.managementFeeRate?.toString() ?? '0.002')
     }
   }, [initialData])
 
@@ -89,7 +83,7 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
       power: powerNum,
       quantity: quantityNum,
       electricityRate: rateNum,
-      managementFeeRate: feeRateNum / 100,
+      managementFeeRate: feeRateNum,
     }
 
     onSubmit(miner)
@@ -195,16 +189,16 @@ export function MinerForm({ initialData, onSubmit, onCancel }: MinerFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="managementFeeRate" className="text-xs">
-          管理费率 <span className="text-muted-foreground">Management Fee (%)</span>
+          管理费率 <span className="text-muted-foreground">$/kWh</span>
         </Label>
         <Input
           id="managementFeeRate"
           type="number"
-          step="0.1"
+          step="0.001"
           min="0"
           value={managementFeeRate}
           onChange={(e) => setManagementFeeRate(e.target.value)}
-          placeholder="e.g. 0.2"
+          placeholder="e.g. 0.002"
           required
         />
       </div>

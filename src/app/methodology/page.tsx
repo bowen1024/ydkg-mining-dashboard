@@ -26,7 +26,7 @@ export default function MethodologyPage() {
         <p className="text-muted-foreground leading-relaxed">
           This dashboard estimates daily cryptocurrency mining revenue. For each miner, it
           calculates how many coins can be mined per day using three core inputs, multiplies by
-          the coin price to get revenue, then subtracts electricity cost to arrive at net profit.
+          the coin price to get revenue, then subtracts electricity cost and management fee to arrive at net profit.
         </p>
       </section>
 
@@ -56,21 +56,35 @@ export default function MethodologyPage() {
         </div>
 
         <div className="rounded-lg border p-4 space-y-3 bg-muted/30">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Step 3 — Daily Electricity Cost</p>
-          <p className="font-mono text-sm">electricity = (power_watts ÷ 1000) × 24 × rate × quantity</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Step 3 — Daily Electricity Consumption &amp; Cost</p>
+          <p className="font-mono text-sm">kWh = (power_watts ÷ 1000) × 24 × quantity</p>
+          <p className="font-mono text-sm">electricity_cost = kWh × electricity_rate</p>
           <ul className="text-xs text-muted-foreground space-y-1.5 pl-1">
             <li><strong>power_watts ÷ 1000</strong> — converts watts to kilowatts (e.g. 3,510 W → 3.51 kW)</li>
             <li><strong>24</strong> — hours in a day (miners run 24/7)</li>
-            <li><strong>rate</strong> — your electricity price in $/kWh (editable in the dashboard)</li>
+            <li><strong>electricity_rate</strong> — your electricity price in $/kWh (editable in the dashboard)</li>
           </ul>
         </div>
 
         <div className="rounded-lg border p-4 space-y-3 bg-muted/30">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Step 4 — Net Profit</p>
-          <p className="font-mono text-sm">profit = revenue − electricity</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Step 4 — Daily Management Fee</p>
+          <p className="font-mono text-sm">management_fee = kWh × management_fee_rate</p>
+          <ul className="text-xs text-muted-foreground space-y-1.5 pl-1">
+            <li><strong>kWh</strong> — total daily electricity consumption calculated in Step 3</li>
+            <li><strong>management_fee_rate</strong> — a flat fee charged per kWh consumed, in $/kWh (default: $0.002/kWh, configurable per miner in Settings)</li>
+          </ul>
           <p className="text-xs text-muted-foreground">
-            A positive number (green) means you earned more than you spent on power.
-            A negative number (red) means mining cost more in electricity than the coins were worth.
+            The management fee is based on electricity <em>consumption</em> (kWh), not on electricity <em>cost</em> (USD).
+            This means it does not change if you negotiate a different electricity rate.
+          </p>
+        </div>
+
+        <div className="rounded-lg border p-4 space-y-3 bg-muted/30">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Step 5 — Net Profit</p>
+          <p className="font-mono text-sm">profit = revenue − electricity_cost − management_fee</p>
+          <p className="text-xs text-muted-foreground">
+            A positive number (green) means you earned more than you spent on power and management fees.
+            A negative number (red) means total costs exceeded the value of coins mined.
           </p>
         </div>
       </section>
@@ -141,21 +155,23 @@ export default function MethodologyPage() {
           <p className="font-medium">Given:</p>
           <ul className="text-muted-foreground space-y-1 pl-1">
             <li>Miner: S21 Pro, hashrate = 245 Th/s, power = 3,531 W</li>
-            <li>Electricity rate: $0.06/kWh</li>
+            <li>Electricity rate: $0.06/kWh · Management fee rate: $0.002/kWh</li>
             <li>Quantity: 2 machines</li>
             <li>BTC difficulty on that day: 114,170,000,000,000 (≈ 114.17 T)</li>
             <li>BTC price on that day: $96,000</li>
           </ul>
-          <p className="font-medium mt-2">Step 1 — Coins per day (single machine):</p>
+          <p className="font-medium mt-2">Step 1 — Coins per day (per machine):</p>
           <p className="font-mono text-muted-foreground">= (245 × 10<sup>12</sup> × 86,400 × 3.125) ÷ (114,170,000,000,000 × 2<sup>32</sup>)</p>
-          <p className="font-mono text-muted-foreground">= (245 × 10<sup>12</sup> × 86,400 × 3.125) ÷ (4.903 × 10<sup>23</sup>)</p>
           <p className="font-mono text-muted-foreground">≈ 0.000135 BTC/day per machine</p>
           <p className="font-medium mt-2">Step 2 — Revenue (2 machines):</p>
-          <p className="font-mono text-muted-foreground">= 0.000135 × $96,000 × 2 = <strong className="text-foreground">$25.92</strong></p>
-          <p className="font-medium mt-2">Step 3 — Electricity cost (2 machines):</p>
-          <p className="font-mono text-muted-foreground">= (3,531 ÷ 1,000) × 24 × $0.06 × 2 = $10.17</p>
-          <p className="font-medium mt-2">Step 4 — Net profit:</p>
-          <p className="font-mono text-muted-foreground">= $25.92 − $10.17 = <strong className="text-green-600">$15.75</strong></p>
+          <p className="font-mono text-muted-foreground">= 0.000135 × 2 × $96,000 = <strong className="text-foreground">$25.92</strong></p>
+          <p className="font-medium mt-2">Step 3 — Electricity consumption &amp; cost (2 machines):</p>
+          <p className="font-mono text-muted-foreground">kWh = (3,531 ÷ 1,000) × 24 × 2 = 169.49 kWh/day</p>
+          <p className="font-mono text-muted-foreground">electricity_cost = 169.49 × $0.06 = <strong className="text-foreground">$10.17</strong></p>
+          <p className="font-medium mt-2">Step 4 — Management fee:</p>
+          <p className="font-mono text-muted-foreground">= 169.49 kWh × $0.002/kWh = <strong className="text-foreground">$0.34</strong></p>
+          <p className="font-medium mt-2">Step 5 — Net profit:</p>
+          <p className="font-mono text-muted-foreground">= $25.92 − $10.17 − $0.34 = <strong className="text-green-600">$15.41</strong></p>
         </div>
       </section>
 

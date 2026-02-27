@@ -104,7 +104,7 @@ export function MinerTabContent({ minerData, onElectricityRateChange }: MinerTab
         <div className="text-xs text-muted-foreground">
           管理费率:{' '}
           <span className="font-medium text-foreground tabular-nums">
-            {((miner.managementFeeRate ?? 0) * 100).toFixed(1)}%
+            ${(miner.managementFeeRate ?? 0).toFixed(3)}/kWh
           </span>
         </div>
 

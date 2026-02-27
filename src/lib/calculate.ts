@@ -54,7 +54,9 @@ export function calculateDailyRevenue(
     miner.quantity
   )
 
-  const managementFee = electricityCost * (miner.managementFeeRate ?? 0)
+  // Management fee is charged per kWh consumed (not as a % of electricity cost)
+  const electricityKWh = (miner.power / 1000) * 24 * miner.quantity
+  const managementFee = electricityKWh * (miner.managementFeeRate ?? 0)
 
   return {
     date,

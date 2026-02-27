@@ -109,7 +109,7 @@ export default function SettingsPage() {
                         </span>
                         <span>{miner.power}W</span>
                         <span>${miner.electricityRate}/kWh</span>
-                        <span>管理费 {((miner.managementFeeRate ?? 0) * 100).toFixed(1)}%</span>
+                        <span>管理费 ${(miner.managementFeeRate ?? 0).toFixed(3)}/kWh</span>
                         <span>{miner.coins.join(' + ')}</span>
                       </div>
                     </div>
